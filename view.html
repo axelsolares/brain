@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="canvas" width="1000" height="1000" style="border:1px solid #d3d3d3;"></canvas>
+    <script src="src/js/Drawer.js"></script>
+    <script src="src/js/Neuron.js"></script>
+    <script src="src/js/BrainGenerator.js"></script>
+    <script src="src/js/Brain.js"></script>
+    <script>
+        const type = {
+            ACTIVATOR: 1,
+            INTERMEDIATE: 2,
+            OUTPUT: 3
+        }   
+        let neurons = [];
+        let cant = 100000;
+
+        var startTime = performance.now()
+        console.time('creacionNeuronas');
+
+        // for(let i = 0; i<= cant; i++){
+        //     let neuron = new Neuron();
+        //     neurons.push(neuron);
+        // }
+
+        var config = [{
+            id: 1,
+            type: type.ACTIVATOR,
+            outputs: [{
+                id: 10,
+                type: type.OUTPUT,
+                weight: 0.3
+            }, {
+                id: 11,
+                type: type.OUTPUT,
+                weight: 0.9
+            }]
+        }, {
+            id: 2,
+            type: type.ACTIVATOR,
+            outputs: [{
+                id: 20,
+                type: type.OUTPUT,
+                weight: 0.6
+            }, {
+                id: 21,
+                type: type.OUTPUT,
+                weight: 0.5
+            }]
+        },{
+            id: 3,
+            type: type.ACTIVATOR,
+            outputs: [{
+                id: 30,
+                type: type.OUTPUT,
+                weight: 0.3
+            }, {
+                id: 31,
+                type: type.OUTPUT,
+                weight: 0.9
+            }]
+        }, {
+            id: 4,
+            type: type.ACTIVATOR,
+            outputs: [{
+                id: 40,
+                type: type.OUTPUT,
+                weight: 0.6
+            }, {
+                id: 41,
+                type: type.OUTPUT,
+                weight: 0.5
+            }]
+        }];
+
+        let brain = new Brain(0,0,10);
+
+        brain.randomNeurons().then(res => {
+            brain.showBrain();
+
+            console.timeEnd('creacionNeuronas');
+        
+            var endTime = performance.now();
+
+            console.log(`Crear las neuronas tomó ${endTime - startTime} milisegundos, osea ${(endTime-startTime)/1000} segundos`)
+            console.log(neurons);
+        });
+    </script>
+</body>
+</html>
