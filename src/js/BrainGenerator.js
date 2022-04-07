@@ -11,28 +11,35 @@ class BrainGenerator{
         this.outputs_size = outputs;
         this.neurons_size = neurons;
         this.neurons = [];
-        this.neurons_batchs = 100;
+        this.neurons_batchs = 200;
         this.drawer = new Drawer();
     }
 
     async getRandonConfiguration(){
-        let prom = this.createRandomNeuron(1, this.type.ACTIVATOR, 1);
+        let promises = [];
+        for(let i = 0; i < this.inputs_size; i++){
+            let id = Math.floor(Math.random() * this.neurons_batchs) + 1;
+            promises.push(this.createRandomNeuron(id, this.type.ACTIVATOR));
+        }
 
-        await Promise.all([prom]);
+        await Promise.all(promises);
+        console.log("Se crearon "+ this.neurons.length + " neuronas");
         return this.neurons;
     }
 
     async createRandomNeuron(id, type) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             console.log("Creando neurona ", id, this);
             let neuron = this.neurons.find(row => row.id === id);
 
             if (neuron) {
                 if (neuron.type == this.type.ACTIVATOR) {
                     resolve(null);
+                    return;
                 }
 
                 resolve(neuron);
+                return;
             }
 
             neuron = new Neuron([], [], type, id);
@@ -40,12 +47,13 @@ class BrainGenerator{
 
             this.drawer.drawNeuron(neuron, this.neurons_batchs);
 
-            if (this.neurons.length >= this.neurons_size) {
+            if ((id / this.neurons_batchs) >= this.neurons_size) {
                 neuron.type = this.type.OUTPUT;
                 resolve(neuron);
+                return;
             }
 
-            let size_outputs = Math.floor(Math.random() * 10) + 1;
+            let size_outputs = Math.floor(Math.random() * 5);
             let outputIds = [];
             let starting = (Math.floor(id / this.neurons_batchs) + 1) * this.neurons_batchs;
 
@@ -57,21 +65,18 @@ class BrainGenerator{
                     ));
                 } while (id === idToCreate || outputIds.includes(idToCreate));
 
-                let newoutput = await this.createRandomNeuron(idToCreate, this.type.INTERMEDIATE);
-
-                if (newoutput) {
-                    outputIds.push(idToCreate);
-                    neuron.addOutput(newoutput, Math.random());
-
-                    this.drawer.drawLine(neuron, newoutput, this.neurons_batchs);
-                }
-            }
-
-            if (neuron.outputs.length === 0) {
-                neuron.type = this.type.OUTPUT;
+                this.createRandomNeuron(idToCreate, this.type.INTERMEDIATE).then(newoutput => {
+                    if (newoutput) {
+                        outputIds.push(idToCreate);
+                        neuron.addOutput(newoutput, Math.random());
+    
+                        this.drawer.drawLine(neuron, newoutput, this.neurons_batchs);
+                    }
+                });
             }
 
             resolve(neuron);
+            return;
         });
     }
 

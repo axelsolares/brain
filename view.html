@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <canvas id="canvas" width="1000" height="1000" style="border:1px solid #d3d3d3;"></canvas>
+    <canvas id="canvas" width="1000" height="3000" style="border:1px solid #d3d3d3;"></canvas>
     <script src="src/js/Drawer.js"></script>
     <script src="src/js/Neuron.js"></script>
     <script src="src/js/BrainGenerator.js"></script>
@@ -79,7 +79,7 @@
             }]
         }];
 
-        let brain = new Brain(0,0,10);
+        let brain = new Brain(10,0,10);
 
         brain.randomNeurons().then(res => {
             brain.showBrain();
